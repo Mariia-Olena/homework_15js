@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        const filmCollection = [
+            {
+                name: 'The Matrix',
+                genre: ['science fiction', 'action'],
+                year: 1999
+            },
+            {
+                name: 'La La Land',
+                genre: ['romance', 'musical', 'comedy', 'drama'],
+                year: 2016
+            },
+            {
+                name: 'Arrival',
+                genre: ['science fiction', 'drama', 'mystery'],
+                year: 2016
+            },
+            {
+                name: 'Harry Potter and the Philosopher\'s Stone',
+                genre: ['fantasy', 'adventure', 'family'],
+                year: 2001
+            },
+            {
+                name: 'The Bridges of Madison County',
+                genre: ['romance', 'drama'],
+                year: 1995
+            },
+            {
+                name: 'Blade Runner 2049',
+                genre: ['science fiction', 'action', 'drama', 'mystery', 'thriller'],
+                year: 2017
+            },
+        ];
+
+        const sortFilmsByGenre = (array) => array.reduce((function(filmList, film) {
+            const byGenre = film['genre'];
+
+            byGenre.forEach((item) => {
+                if (!filmList[item]) {
+                    filmList[item] = [];
+                };
+            }); 
+            
+            for (const key in filmList) {
+                if (byGenre.includes(key)) {
+                    filmList[key].push(film);
+                };
+            };
+
+            return filmList;
+        }), {});
+
+        const sortedFilmsByGenre = sortFilmsByGenre(filmCollection);
+
+        sortedFilmsByGenre[Symbol.iterator] = function() {
+            const values = Object.values(this).flat();
+
+            const uniqueValues = values.filter((value, index) => {
+                return values.indexOf(value) === index;
+            });
+
+            let index = 0;
+
+            return {
+                next() {
+                    if (index >= uniqueValues.length) {
+                        return { 
+                            done: true
+                        };
+                    };
+                    
+                    return {
+                        done: false,
+                        value: uniqueValues[index++]
+                    };
+                }
+            };
+        };
+
+        for (const x of sortedFilmsByGenre) {
+            console.log(x);
+        };
+
+        console.log(sortedFilmsByGenre);
+    </script>
+</body>
+</html>
