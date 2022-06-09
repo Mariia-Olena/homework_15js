@@ -41,56 +41,60 @@
             },
         ];
 
-        const sortFilmsByGenre = (array) => array.reduce((function(filmList, film) {
-            const byGenre = film['genre'];
+        function SortFilmsByGenre (array) {
+            this.sortedFilms = array.reduce((function(filmList, film) {
+                const byGenre = film['genre'];
 
-            byGenre.forEach((item) => {
-                if (!filmList[item]) {
-                    filmList[item] = [];
+                byGenre.forEach((item) => {
+                    if (!filmList[item]) {
+                        filmList[item] = [];
+                    };
+                }); 
+                
+                for (const key in filmList) {
+                    if (byGenre.includes(key)) {
+                        filmList[key].push(film);
+                    };
                 };
-            }); 
-            
-            for (const key in filmList) {
-                if (byGenre.includes(key)) {
-                    filmList[key].push(film);
-                };
-            };
 
-            return filmList;
-        }), {});
+                return filmList;
+            }), {});
 
-        const sortedFilmsByGenre = sortFilmsByGenre(filmCollection);
+            this.sortedFilms[Symbol.iterator] = function() {
+                const values = Object.values(this).flat();
 
-        sortedFilmsByGenre[Symbol.iterator] = function() {
-            const values = Object.values(this).flat();
+                const uniqueValues = values.filter((value, index) => {
+                    return values.indexOf(value) === index;
+                });
 
-            const uniqueValues = values.filter((value, index) => {
-                return values.indexOf(value) === index;
-            });
+                let index = 0;
 
-            let index = 0;
-
-            return {
-                next() {
-                    if (index >= uniqueValues.length) {
-                        return { 
-                            done: true
+                return {
+                    next() {
+                        if (index >= uniqueValues.length) {
+                            return { 
+                                done: true
+                            };
                         };
-                    };
-                    
-                    return {
-                        done: false,
-                        value: uniqueValues[index++]
-                    };
-                }
+                        
+                        return {
+                            done: false,
+                            value: uniqueValues[index++]
+                        };
+                    }
+                };
             };
+
+            return this.sortedFilms
         };
+
+        const sortedFilmsByGenre = new SortFilmsByGenre(filmCollection);
+
+        console.log(sortedFilmsByGenre);
 
         for (const x of sortedFilmsByGenre) {
             console.log(x);
         };
-
-        console.log(sortedFilmsByGenre);
     </script>
 </body>
 </html>
